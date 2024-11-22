@@ -1,0 +1,30 @@
+repos:
+  # Blackを使ったPythonコードフォーマット
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+        args: ["--line-length", "88"]
+        files: "/.py$" # Pythonファイルのみ対象
+        pass_filenames: false # 自動で修正されたファイルを再ステージング
+
+  # nbstripoutを使ったNotebookの出力セル削除
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.5.0
+    hooks:
+      - id: nbstripout
+        name: Remove output cells from Jupyter Notebooks
+        args: ["--install", "--attributes=.gitattributes"]
+        files: "/.ipynb$" # Notebookファイルのみ対象
+        pass_filenames: false # 自動で修正されたファイルを再ステージング
+
+  # 不要な空白とEOF修正（テキストファイルのみ）
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+        types: [text] # テキストファイルに適用
+        pass_filenames: false # 自動で修正されたファイルを再ステージング
+      - id: end-of-file-fixer
+        types: [text] # テキストファイルに適用
+        pass_filenames: false # 自動で修正されたファイルを再ステージング

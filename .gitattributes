@@ -1,0 +1,5 @@
+*.ipynb filter=nbstripout
+*.png binary
+*.jpg binary
+*.pdf binary
+* text=auto
