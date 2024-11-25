@@ -1,0 +1,356 @@
+<article class="markdown-body entry-content container-lg" itemprop="text"><div class="markdown-heading" dir="auto"><h1 class="heading-element" dir="auto" tabindex="-1">SAM 2: 画像と動画における任意のセグメント化</h1><a aria-label="Permalink: SAM 2: Segment Anything in Images and Videos" class="anchor" href="#sam-2-segment-anything-in-images-and-videos" id="user-content-sam-2-segment-anything-in-images-and-videos"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><strong><a href="https://ai.meta.com/research/" rel="nofollow">MetaのAI、FAIR</a></strong></p>
+<p dir="auto"><a href="https://nikhilaravi.com/" rel="nofollow">ニキラ・ラヴィ</a>, <a href="https://gabeur.github.io/" rel="nofollow">ヴァレンティン・ガブール</a>, <a href="https://scholar.google.com/citations?user=E8DVVYQAAAAJ&amp;hl=en" rel="nofollow">ユアン・ティン・フー</a>, <a href="https://ronghanghu.com/" rel="nofollow">ロンハン・フー</a>, <a href="https://scholar.google.com/citations?user=4LWx24UAAAAJ&amp;hl=en" rel="nofollow">チャイタニャ・リャリ</a>, <a href="https://scholar.google.com/citations?user=VeTSl0wAAAAJ&amp;hl=en" rel="nofollow">テンギュ・マ</a>, <a href="https://hkhedr.com/" rel="nofollow">ハイサム・ケドール</a>, <a href="https://scholar.google.de/citations?user=Tpt57v0AAAAJ&amp;hl=en" rel="nofollow">ローマン・レードル</a>, <a href="https://scholar.google.com/citations?hl=fr&amp;user=n-SnMhoAAAAJ" rel="nofollow">クロエ・ローランド</a>, <a href="https://scholar.google.com/citations?user=c8IpF9gAAAAJ&amp;hl=en" rel="nofollow">ローラ・グスタフソン</a>, <a href="https://ericmintun.github.io/" rel="nofollow">エリック・ミントゥン</a>, <a href="https://junting.github.io/" rel="nofollow">ジュンティン・パン</a>, <a href="https://scholar.google.co.in/citations?user=m34oaWEAAAAJ&amp;hl=en" rel="nofollow">カリヤン・ヴァスデヴ・アルワラ</a>, <a href="https://www.nicolascarion.com/" rel="nofollow">ニコラス・カリオン</a>, <a href="https://chaoyuan.org/" rel="nofollow">チャオ・ユアン・ウー</a>, <a href="https://www.rossgirshick.info/" rel="nofollow">ロス・ガーシック</a>, <a href="https://pdollar.github.io/" rel="nofollow">ピオトル・ドラー</a>, <a href="https://feichtenhofer.github.io/" rel="nofollow">クリストフ・ファイヒテンホーファー</a></p>
+<p dir="auto">[<a href="https://ai.meta.com/research/publications/sam-2-segment-anything-in-images-and-videos/" rel="nofollow"><code>論文</code></a>] [<a href="https://ai.meta.com/sam2" rel="nofollow"><code>プロジェクト</code></a>] [<a href="https://sam2.metademolab.com/" rel="nofollow"><code>デモ</code></a>] [<a href="https://ai.meta.com/datasets/segment-anything-video" rel="nofollow"><code>データセット</code></a>] [<a href="https://ai.meta.com/blog/segment-anything-2" rel="nofollow"><code>ブログ</code></a>] [<a href="#citing-sam-2"><code>BibTeX</code></a>]</p>
+<p dir="auto"><a href="/facebookresearch/sam2/blob/main/assets/model_diagram.png?raw=true" rel="noopener noreferrer" target="_blank"><img alt="SAM 2 architecture" src="/facebookresearch/sam2/raw/main/assets/model_diagram.png?raw=true" style="max-width: 100%;"/></a></p>
+<p dir="auto"><strong>セグメント・エニシング・モデル2（SAM 2）</strong>は、画像と動画におけるプロンプト可能な視覚的セグメンテーションを解決するための基盤モデルです。SAMを動画に拡張し、画像を単一フレームの動画として扱います。モデル設計は、リアルタイム動画処理のためのストリーミングメモリを備えたシンプルなトランスフォーマーアーキテクチャです。<a href="https://ai.meta.com/datasets/segment-anything-video" rel="nofollow"><strong>SA-Vデータセット</strong></a>を収集するために、ユーザーとの対話を通じてモデルとデータを改善するモデルインザループデータエンジンを構築しました。SAM 2は、私たちのデータでトレーニングされ、幅広いタスクと視覚的ドメインで強力なパフォーマンスを提供します。</p>
+<p dir="auto"><a href="/facebookresearch/sam2/blob/main/assets/sa_v_dataset.jpg?raw=true" rel="noopener noreferrer" target="_blank"><img alt="SA-V dataset" src="/facebookresearch/sam2/raw/main/assets/sa_v_dataset.jpg?raw=true" style="max-width: 100%;"/></a></p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">最新の更新情報</h2><a aria-label="Permalink: Latest updates" class="anchor" href="#latest-updates" id="user-content-latest-updates"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><strong>2024年9月30日 -- SAM 2.1 デベロッパースイート（新しいチェックポイント、トレーニングコード、ウェブデモ）がリリースされました</strong></p>
+<ul dir="auto">
+<li>改良されたモデルチェックポイントの新しいスイート（<strong>SAM 2.1</strong>と呼ばれる）がリリースされました。詳細は<a href="#model-description">モデル説明</a>をご覧ください。<ul dir="auto">
+<li>新しいSAM 2.1チェックポイントを使用するには、このリポジトリの最新のモデルコードが必要です。以前のバージョンをインストールしている場合は、まず<code>pip uninstall SAM-2</code>を使用して以前のバージョンをアンインストールし、このリポジトリから最新のコードを取得するために<code>git pull</code>を実行し、その後<a href="#installation">インストール</a>の手順に従ってリポジトリを再インストールしてください。</li>
+</ul>
+</li>
+<li>トレーニング（およびファインチューニング）コードがリリースされました。開始方法については<a href="/facebookresearch/sam2/blob/main/training/README.md"><code>training/README.md</code></a>をご覧ください。</li>
+<li>SAM 2ウェブデモのフロントエンド＋バックエンドコードがリリースされました。詳細は<a href="/facebookresearch/sam2/blob/main/demo/README.md"><code>demo/README.md</code></a>をご覧ください。</li>
+</ul>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">インストール</h2><a aria-label="Permalink: Installation" class="anchor" href="#installation" id="user-content-installation"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">SAM 2を使用する前にインストールする必要があります。このコードは<code>python&gt;=3.10</code>および<code>torch&gt;=2.3.1</code>と<code>torchvision&gt;=0.18.1</code>を必要とします。PyTorchとTorchVisionの依存関係をインストールするには<a href="https://pytorch.org/get-started/locally/" rel="nofollow">こちら</a>の指示に従ってください。SAM 2をGPUマシンにインストールするには、以下を使用します。</p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>git clone https://github.com/facebookresearch/sam2.git <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">cd</span> sam2
+  
+  pip install -e <span class="pl-c1">.</span></pre><div class="zeroclipboard-container">
+<clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" role="button" tabindex="0" value="git clone https://github.com/facebookresearch/sam2.git &amp;&amp; cd sam2
+  
+  pip install -e .">
+<svg aria-hidden="true" class="octicon octicon-copy js-clipboard-copy-icon" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+<svg aria-hidden="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+</clipboard-copy>
+</div></div>
+<p dir="auto">Windowsにインストールする場合は、<a href="https://learn.microsoft.com/en-us/windows/wsl/install" rel="nofollow">Windows Subsystem for Linux (WSL)</a>とUbuntuを使用することを強くお勧めします。</p>
+<p dir="auto">SAM 2予測器を使用し、例のノートブックを実行するには、<code>jupyter</code>と<code>matplotlib</code>が必要であり、以下でインストールできます。</p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>pip install -e <span class="pl-s"><span class="pl-pds">"</span>.[notebooks]<span class="pl-pds">"</span></span></pre><div class="zeroclipboard-container">
+<clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" role="button" tabindex="0" value='pip install -e ".[notebooks]"'>
+<svg aria-hidden="true" class="octicon octicon-copy js-clipboard-copy-icon" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+<svg aria-hidden="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+</clipboard-copy>
+</div></div>
+<p dir="auto">注意:</p>
+<ol dir="auto">
+<li>このインストールのために<a href="https://www.anaconda.com/" rel="nofollow">Anaconda</a>を使用して新しいPython環境を作成し、<code>pip</code>を使用してPyTorch 2.3.1（またはそれ以上）をインストールすることをお勧めします。<a href="https://pytorch.org/" rel="nofollow">https://pytorch.org/</a>に従ってください。現在の環境にPyTorchのバージョンが2.3.1未満の場合、上記のインストールコマンドは最新のPyTorchバージョンにアップグレードしようとします。<code>pip</code>.</li>
+<li>上記の手順では、<code>nvcc</code>を使用してカスタムCUDAカーネルをコンパイルする必要があります。<a href="https://developer.nvidia.com/cuda-toolkit-archive" rel="nofollow">CUDAツールキット</a>PyTorch CUDAバージョンに一致するバージョンを使用してください。</li>
+<li>インストール中に次のようなメッセージが表示された場合:<code>SAM 2 CUDA拡張のビルドに失敗しました</code>無視してSAM 2を使用することができます（いくつかの後処理機能が制限される場合がありますが、ほとんどの場合結果には影響しません）。</li>
+</ol>
+<p dir="auto">詳細については<a href="/facebookresearch/sam2/blob/main/INSTALL.md"><code>INSTALL.md</code></a>を参照してください。</p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">はじめに</h2><a aria-label="Permalink: Getting Started" class="anchor" href="#getting-started" id="user-content-getting-started"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h3 class="heading-element" dir="auto" tabindex="-1">チェックポイントのダウンロード</h3><a aria-label="Permalink: Download Checkpoints" class="anchor" href="#download-checkpoints" id="user-content-download-checkpoints"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">まず、モデルチェックポイントをダウンロードする必要があります。すべてのモデルチェックポイントは次のコマンドでダウンロードできます:</p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-c1">cd</span> checkpoints <span class="pl-k">&amp;&amp;</span> \
+  ./download_ckpts.sh <span class="pl-k">&amp;&amp;</span> \
+  <span class="pl-c1">cd</span> ..</pre><div class="zeroclipboard-container">
+<clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" role="button" tabindex="0" value="cd checkpoints &amp;&amp; \
+  ./download_ckpts.sh &amp;&amp; \
+  cd ..">
+<svg aria-hidden="true" class="octicon octicon-copy js-clipboard-copy-icon" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+<svg aria-hidden="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+</clipboard-copy>
+</div></div>
+<p dir="auto">または個別に次のリンクから:</p>
+<ul dir="auto">
+<li><a href="https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt" rel="nofollow">sam2.1_hiera_tiny.pt</a></li>
+<li><a href="https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_small.pt" rel="nofollow">sam2.1_hiera_small.pt</a></li>
+<li><a href="https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_base_plus.pt" rel="nofollow">sam2.1_hiera_base_plus.pt</a></li>
+<li><a href="https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_large.pt" rel="nofollow">sam2.1_hiera_large.pt</a></li>
+</ul>
+<p dir="auto">（これらはSAM 2.1として示される改良されたチェックポイントです。詳細は<a href="#model-description">モデル説明</a>を参照してください。）</p>
+<p dir="auto">次に、SAM 2を使用して画像および動画の予測を行うことができます。</p>
+<div class="markdown-heading" dir="auto"><h3 class="heading-element" dir="auto" tabindex="-1">画像予測</h3><a aria-label="Permalink: Image prediction" class="anchor" href="#image-prediction" id="user-content-image-prediction"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">SAM 2は静止画像において<a href="https://github.com/facebookresearch/segment-anything">SAM</a>と同様の機能を持ち、画像用途においてSAMに近い予測APIを提供します。<code>SAM2ImagePredictor</code>クラスは画像プロンプトのための簡単なインターフェースを提供します。</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-k">import</span> <span class="pl-s1">torch</span>
+  <span class="pl-k">from</span> <span class="pl-s1">sam2</span>.<span class="pl-s1">build_sam</span> <span class="pl-k">import</span> <span class="pl-s1">build_sam2</span>
+  <span class="pl-k">from</span> <span class="pl-s1">sam2</span>.<span class="pl-s1">sam2_image_predictor</span> <span class="pl-k">import</span> <span class="pl-v">SAM2ImagePredictor</span>
+  
+  <span class="pl-s1">checkpoint</span> <span class="pl-c1">=</span> <span class="pl-s">"./checkpoints/sam2.1_hiera_large.pt"</span>
+  <span class="pl-s1">model_cfg</span> <span class="pl-c1">=</span> <span class="pl-s">"configs/sam2.1/sam2.1_hiera_l.yaml"</span>
+  <span class="pl-s1">predictor</span> <span class="pl-c1">=</span> <span class="pl-v">SAM2ImagePredictor</span>(<span class="pl-en">build_sam2</span>(<span class="pl-s1">model_cfg</span>, <span class="pl-s1">checkpoint</span>))
+  
+  <span class="pl-k">with</span> <span class="pl-s1">torch</span>.<span class="pl-en">inference_mode</span>(), <span class="pl-s1">torch</span>.<span class="pl-en">autocast</span>(<span class="pl-s">"cuda"</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">torch</span>.<span class="pl-s1">bfloat16</span>):
+      <span class="pl-s1">predictor</span>.<span class="pl-s1">set_image</span>(<span class="pl-c1">&lt;</span><span class="pl-s1">your_image</span><span class="pl-c1">&gt;</span>)
+      <span class="pl-s1">masks</span>, <span class="pl-s1">_</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">predictor</span>.<span class="pl-s1">predict</span>(<span class="pl-c1">&lt;</span><span class="pl-s1">input_prompts</span><span class="pl-c1">&gt;</span>)</pre><div class="zeroclipboard-container">
+<clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" role="button" tabindex="0" value='import torch
+  from sam2.build_sam import build_sam2
+  from sam2.sam2_image_predictor import SAM2ImagePredictor
+  
+  checkpoint = "./checkpoints/sam2.1_hiera_large.pt"
+  model_cfg = "configs/sam2.1/sam2.1_hiera_l.yaml"
+  predictor = SAM2ImagePredictor(build_sam2(model_cfg, checkpoint))
+  
+  with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+      predictor.set_image(&lt;your_image&gt;)
+      masks, _, _ = predictor.predict(&lt;input_prompts&gt;)'>
+<svg aria-hidden="true" class="octicon octicon-copy js-clipboard-copy-icon" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+<svg aria-hidden="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+</clipboard-copy>
+</div></div>
+<p dir="auto">例については<a href="/facebookresearch/sam2/blob/main/notebooks/image_predictor_example.ipynb">image_predictor_example.ipynb</a>（Colabでも<a href="https://colab.research.google.com/github/facebookresearch/sam2/blob/main/notebooks/image_predictor_example.ipynb" rel="nofollow">こちら</a>）を参照してください。</p>
+<p dir="auto">SAM 2はまた、SAMと同様に画像上での自動マスク生成をサポートします。詳細は<a href="/facebookresearch/sam2/blob/main/notebooks/automatic_mask_generator_example.ipynb">automatic_mask_generator_example.ipynb</a>（Colabでも<a href="https://colab.research.google.com/github/facebookresearch/sam2/blob/main/notebooks/automatic_mask_generator_example.ipynb" rel="nofollow">こちら</a>）を参照してください。</p>
+<div class="markdown-heading" dir="auto"><h3 class="heading-element" dir="auto" tabindex="-1">動画予測</h3><a aria-label="Permalink: Video prediction" class="anchor" href="#video-prediction" id="user-content-video-prediction"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">動画におけるプロンプト可能なセグメンテーションとトラッキングのために、プロンプトを追加し、マスクレットを動画全体に伝播させるAPIを備えた動画予測器を提供します。SAM 2は複数のオブジェクトに対する動画推論をサポートし、各動画内の相互作用を追跡する推論状態を使用します。</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-k">import</span> <span class="pl-s1">torch</span>
+  <span class="pl-k">from</span> <span class="pl-s1">sam2</span>.<span class="pl-s1">build_sam</span> <span class="pl-k">import</span> <span class="pl-s1">build_sam2_video_predictor</span>
+  
+  <span class="pl-s1">checkpoint</span> <span class="pl-c1">=</span> <span class="pl-s">"./checkpoints/sam2.1_hiera_large.pt"</span>
+  <span class="pl-s1">model_cfg</span> <span class="pl-c1">=</span> <span class="pl-s">"configs/sam2.1/sam2.1_hiera_l.yaml"</span>
+  <span class="pl-s1">predictor</span> <span class="pl-c1">=</span> <span class="pl-en">build_sam2_video_predictor</span>(<span class="pl-s1">model_cfg</span>, <span class="pl-s1">checkpoint</span>)
+  
+  <span class="pl-k">with</span> <span class="pl-s1">torch</span>.<span class="pl-en">inference_mode</span>(), <span class="pl-s1">torch</span>.<span class="pl-en">autocast</span>(<span class="pl-s">"cuda"</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">torch</span>.<span class="pl-s1">bfloat16</span>):
+      <span class="pl-s1">state</span> <span class="pl-c1">=</span> <span class="pl-s1">predictor</span>.<span class="pl-s1">init_state</span>(<span class="pl-c1">&lt;</span><span class="pl-s1">your_video</span><span class="pl-c1">&gt;</span>)
+  
+      <span class="pl-c"># add new prompts and instantly get the output on the same frame</span>
+      <span class="pl-s1">frame_idx</span>, <span class="pl-s1">object_ids</span>, <span class="pl-s1">masks</span> <span class="pl-c1">=</span> <span class="pl-s1">predictor</span>.<span class="pl-s1">add_new_points_or_box</span>(<span class="pl-s1">state</span>, <span class="pl-c1">&lt;</span><span class="pl-s1">your_prompts</span><span class="pl-c1">&gt;</span>):
+  
+      <span class="pl-c"># propagate the prompts to get masklets throughout the video</span>
+      <span class="pl-k">for</span> <span class="pl-s1">frame_idx</span>, <span class="pl-s1">object_ids</span>, <span class="pl-s1">masks</span> <span class="pl-c1">in</span> <span class="pl-s1">predictor</span>.<span class="pl-en">propagate_in_video</span>(<span class="pl-s1">state</span>):
+          ...</pre><div class="zeroclipboard-container">
+<clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" role="button" tabindex="0" value='import torch
+  from sam2.build_sam import build_sam2_video_predictor
+  
+  checkpoint = "./checkpoints/sam2.1_hiera_large.pt"
+  model_cfg = "configs/sam2.1/sam2.1_hiera_l.yaml"
+  predictor = build_sam2_video_predictor(model_cfg, checkpoint)
+  
+  with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+      state = predictor.init_state(&lt;your_video&gt;)
+  
+      # add new prompts and instantly get the output on the same frame
+      frame_idx, object_ids, masks = predictor.add_new_points_or_box(state, &lt;your_prompts&gt;):
+  
+      # propagate the prompts to get masklets throughout the video
+      for frame_idx, object_ids, masks in predictor.propagate_in_video(state):
+          ...'>
+<svg aria-hidden="true" class="octicon octicon-copy js-clipboard-copy-icon" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+<svg aria-hidden="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+</clipboard-copy>
+</div></div>
+<p dir="auto">例については<a href="/facebookresearch/sam2/blob/main/notebooks/video_predictor_example.ipynb">video_predictor_example.ipynb</a>（Colabでも<a href="https://colab.research.google.com/github/facebookresearch/sam2/blob/main/notebooks/video_predictor_example.ipynb" rel="nofollow">こちら</a>）を参照してください。</p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">🤗 Hugging Faceからのロード</h2><a aria-label="Permalink: Load from 🤗 Hugging Face" class="anchor" href="#load-from--hugging-face" id="user-content-load-from--hugging-face"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">また、モデルは<a href="https://huggingface.co/models?search=facebook/sam2" rel="nofollow">Hugging Face</a>からもロードできます（<code>pip install huggingface_hub</code>).</p>
+<p dir="auto">画像予測用:</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-k">import</span> <span class="pl-s1">torch</span>
+  <span class="pl-k">from</span> <span class="pl-s1">sam2</span>.<span class="pl-s1">sam2_image_predictor</span> <span class="pl-k">import</span> <span class="pl-v">SAM2ImagePredictor</span>
+  
+  <span class="pl-s1">predictor</span> <span class="pl-c1">=</span> <span class="pl-v">SAM2ImagePredictor</span>.<span class="pl-en">from_pretrained</span>(<span class="pl-s">"facebook/sam2-hiera-large"</span>)
+  
+  <span class="pl-k">with</span> <span class="pl-s1">torch</span>.<span class="pl-en">inference_mode</span>(), <span class="pl-s1">torch</span>.<span class="pl-en">autocast</span>(<span class="pl-s">"cuda"</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">torch</span>.<span class="pl-s1">bfloat16</span>):
+      <span class="pl-s1">predictor</span>.<span class="pl-s1">set_image</span>(<span class="pl-c1">&lt;</span><span class="pl-s1">your_image</span><span class="pl-c1">&gt;</span>)
+      <span class="pl-s1">masks</span>, <span class="pl-s1">_</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">predictor</span>.<span class="pl-s1">predict</span>(<span class="pl-c1">&lt;</span><span class="pl-s1">input_prompts</span><span class="pl-c1">&gt;</span>)</pre><div class="zeroclipboard-container">
+<clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" role="button" tabindex="0" value='import torch
+  from sam2.sam2_image_predictor import SAM2ImagePredictor
+  
+  predictor = SAM2ImagePredictor.from_pretrained("facebook/sam2-hiera-large")
+  
+  with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+      predictor.set_image(&lt;your_image&gt;)
+      masks, _, _ = predictor.predict(&lt;input_prompts&gt;)'>
+<svg aria-hidden="true" class="octicon octicon-copy js-clipboard-copy-icon" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+<svg aria-hidden="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+</clipboard-copy>
+</div></div>
+<p dir="auto">動画予測用:</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-k">import</span> <span class="pl-s1">torch</span>
+  <span class="pl-k">from</span> <span class="pl-s1">sam2</span>.<span class="pl-s1">sam2_video_predictor</span> <span class="pl-k">import</span> <span class="pl-v">SAM2VideoPredictor</span>
+  
+  <span class="pl-s1">predictor</span> <span class="pl-c1">=</span> <span class="pl-v">SAM2VideoPredictor</span>.<span class="pl-en">from_pretrained</span>(<span class="pl-s">"facebook/sam2-hiera-large"</span>)
+  
+  <span class="pl-k">with</span> <span class="pl-s1">torch</span>.<span class="pl-en">inference_mode</span>(), <span class="pl-s1">torch</span>.<span class="pl-en">autocast</span>(<span class="pl-s">"cuda"</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">torch</span>.<span class="pl-s1">bfloat16</span>):
+      <span class="pl-s1">state</span> <span class="pl-c1">=</span> <span class="pl-s1">predictor</span>.<span class="pl-s1">init_state</span>(<span class="pl-c1">&lt;</span><span class="pl-s1">your_video</span><span class="pl-c1">&gt;</span>)
+  
+      <span class="pl-c"># add new prompts and instantly get the output on the same frame</span>
+      <span class="pl-s1">frame_idx</span>, <span class="pl-s1">object_ids</span>, <span class="pl-s1">masks</span> <span class="pl-c1">=</span> <span class="pl-s1">predictor</span>.<span class="pl-s1">add_new_points_or_box</span>(<span class="pl-s1">state</span>, <span class="pl-c1">&lt;</span><span class="pl-s1">your_prompts</span><span class="pl-c1">&gt;</span>):
+  
+      <span class="pl-c"># propagate the prompts to get masklets throughout the video</span>
+      <span class="pl-k">for</span> <span class="pl-s1">frame_idx</span>, <span class="pl-s1">object_ids</span>, <span class="pl-s1">masks</span> <span class="pl-c1">in</span> <span class="pl-s1">predictor</span>.<span class="pl-en">propagate_in_video</span>(<span class="pl-s1">state</span>):
+          ...</pre><div class="zeroclipboard-container">
+<clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" role="button" tabindex="0" value='import torch
+  from sam2.sam2_video_predictor import SAM2VideoPredictor
+  
+  predictor = SAM2VideoPredictor.from_pretrained("facebook/sam2-hiera-large")
+  
+  with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+      state = predictor.init_state(&lt;your_video&gt;)
+  
+      # add new prompts and instantly get the output on the same frame
+      frame_idx, object_ids, masks = predictor.add_new_points_or_box(state, &lt;your_prompts&gt;):
+  
+      # propagate the prompts to get masklets throughout the video
+      for frame_idx, object_ids, masks in predictor.propagate_in_video(state):
+          ...'>
+<svg aria-hidden="true" class="octicon octicon-copy js-clipboard-copy-icon" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+<svg aria-hidden="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+</clipboard-copy>
+</div></div>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">モデル説明</h2><a aria-label="Permalink: Model Description" class="anchor" href="#model-description" id="user-content-model-description"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h3 class="heading-element" dir="auto" tabindex="-1">SAM 2.1チェックポイント</h3><a aria-label="Permalink: SAM 2.1 checkpoints" class="anchor" href="#sam-21-checkpoints" id="user-content-sam-21-checkpoints"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">以下の表は、2024年9月29日にリリースされた改良されたSAM 2.1チェックポイントを示しています。</p>
+<markdown-accessiblity-table data-catalyst=""><table>
+<thead>
+<tr>
+<th align="center"><strong>モデル</strong></th>
+<th align="center"><strong>サイズ (M)</strong></th>
+<th align="center"><strong>速度 (FPS)</strong></th>
+<th align="center"><strong>SA-Vテスト (J&amp;F)</strong></th>
+<th align="center"><strong>MOSE検証 (J&amp;F)</strong></th>
+<th align="center"><strong>LVOS v2 (J&amp;F)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">sam2.1_hiera_tiny (<br/> (<a href="/facebookresearch/sam2/blob/main/sam2/configs/sam2.1/sam2.1_hiera_t.yaml">設定</a>, <a href="https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt" rel="nofollow">チェックポイント</a>)</td>
+<td align="center">38.9</td>
+<td align="center">47.2</td>
+<td align="center">76.5</td>
+<td align="center">71.8</td>
+<td align="center">77.3</td>
+</tr>
+<tr>
+<td align="center">sam2.1_hiera_small (<br/> (<a href="/facebookresearch/sam2/blob/main/sam2/configs/sam2.1/sam2.1_hiera_s.yaml">設定</a>, <a href="https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_small.pt" rel="nofollow">チェックポイント</a>)</td>
+<td align="center">46</td>
+<td align="center">43.3 (53.0 コンパイル済み*)</td>
+<td align="center">76.6</td>
+<td align="center">73.5</td>
+<td align="center">78.3</td>
+</tr>
+<tr>
+<td align="center">sam2.1_hiera_base_plus (<br/> (<a href="/facebookresearch/sam2/blob/main/sam2/configs/sam2.1/sam2.1_hiera_b+.yaml">設定</a>, <a href="https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_base_plus.pt" rel="nofollow">チェックポイント</a>)</td>
+<td align="center">80.8</td>
+<td align="center">-</td>
+<td align="center">78.2</td>
+<td align="center">73.7</td>
+<td align="center">78.2</td>
+</tr>
+<tr>
+<td align="center">sam2.1_hiera_large（<br/> (<a href="/facebookresearch/sam2/blob/main/sam2/configs/sam2.1/sam2.1_hiera_l.yaml">設定</a>, <a href="https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_large.pt" rel="nofollow">チェックポイント</a>)</td>
+<td align="center">224.4</td>
+<td align="center">24.2（30.2 コンパイル済み*）</td>
+<td align="center">79.5</td>
+<td align="center">74.6</td>
+<td align="center">80.6</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<div class="markdown-heading" dir="auto"><h3 class="heading-element" dir="auto" tabindex="-1">SAM 2 チェックポイント</h3><a aria-label="Permalink: SAM 2 checkpoints" class="anchor" href="#sam-2-checkpoints" id="user-content-sam-2-checkpoints"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">2024年7月29日にリリースされた以前のSAM 2チェックポイントは以下の通りです:</p>
+<markdown-accessiblity-table data-catalyst=""><table>
+<thead>
+<tr>
+<th align="center"><strong>モデル</strong></th>
+<th align="center"><strong>サイズ (M)</strong></th>
+<th align="center"><strong>速度 (FPS)</strong></th>
+<th align="center"><strong>SA-Vテスト (J&amp;F)</strong></th>
+<th align="center"><strong>MOSE検証 (J&amp;F)</strong></th>
+<th align="center"><strong>LVOS v2 (J&amp;F)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">sam2_hiera_tiny（<br/> (<a href="/facebookresearch/sam2/blob/main/sam2/configs/sam2/sam2_hiera_t.yaml">設定</a>, <a href="https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_tiny.pt" rel="nofollow">チェックポイント</a>)</td>
+<td align="center">38.9</td>
+<td align="center">47.2</td>
+<td align="center">75.0</td>
+<td align="center">70.9</td>
+<td align="center">75.3</td>
+</tr>
+<tr>
+<td align="center">sam2_hiera_small（<br/> (<a href="/facebookresearch/sam2/blob/main/sam2/configs/sam2/sam2_hiera_s.yaml">設定</a>, <a href="https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_small.pt" rel="nofollow">チェックポイント</a>)</td>
+<td align="center">46</td>
+<td align="center">43.3（53.0 コンパイル済み*）</td>
+<td align="center">74.9</td>
+<td align="center">71.5</td>
+<td align="center">76.4</td>
+</tr>
+<tr>
+<td align="center">sam2_hiera_base_plus（<br/> (<a href="/facebookresearch/sam2/blob/main/sam2/configs/sam2/sam2_hiera_b+.yaml">設定</a>, <a href="https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_base_plus.pt" rel="nofollow">チェックポイント</a>)</td>
+<td align="center">80.8</td>
+<td align="center">34.8（43.8 コンパイル済み*）</td>
+<td align="center">74.7</td>
+<td align="center">72.8</td>
+<td align="center">75.8</td>
+</tr>
+<tr>
+<td align="center">sam2_hiera_large（<br/> (<a href="/facebookresearch/sam2/blob/main/sam2/configs/sam2/sam2_hiera_l.yaml">設定</a>, <a href="https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_large.pt" rel="nofollow">チェックポイント</a>)</td>
+<td align="center">224.4</td>
+<td align="center">24.2（30.2 コンパイル済み*）</td>
+<td align="center">76.0</td>
+<td align="center">74.6</td>
+<td align="center">79.8</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p dir="auto">* モデルをコンパイルするには、設定で<code>compile_image_encoder: True</code>を設定してください。</p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">セグメント・エニシング・ビデオデータセット</h2><a aria-label="Permalink: Segment Anything Video Dataset" class="anchor" href="#segment-anything-video-dataset" id="user-content-segment-anything-video-dataset"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">詳細は<a href="/facebookresearch/sam2/blob/main/sav_dataset/README.md">sav_dataset/README.md</a>をご覧ください。</p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">SAM 2のトレーニング</h2><a aria-label="Permalink: Training SAM 2" class="anchor" href="#training-sam-2" id="user-content-training-sam-2"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">SAM 2をカスタムデータセット（画像、動画、またはその両方）でトレーニングまたはファインチューニングできます。トレーニングの<a href="/facebookresearch/sam2/blob/main/training/README.md">README</a>を参照して開始してください。</p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">SAM 2のウェブデモ</h2><a aria-label="Permalink: Web demo for SAM 2" class="anchor" href="#web-demo-for-sam-2" id="user-content-web-demo-for-sam-2"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">SAM 2ウェブデモ（<a href="https://sam2.metademolab.com/demo" rel="nofollow">https://sam2.metademolab.com/demo</a>に類似したローカルデプロイ可能なバージョン）のフロントエンド＋バックエンドコードを公開しました。ウェブデモの<a href="/facebookresearch/sam2/blob/main/demo/README.md">README</a>をご覧ください。</p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">ライセンス</h2><a aria-label="Permalink: License" class="anchor" href="#license" id="user-content-license"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">SAM 2モデルチェックポイント、SAM 2デモコード（フロントエンドおよびバックエンド）、およびSAM 2トレーニングコードは<a href="/facebookresearch/sam2/blob/main/LICENSE">Apache 2.0</a>ライセンスの下で提供されていますが、<a href="https://github.com/rsms/inter?tab=OFL-1.1-1-ov-file">Inter Font</a>および<a href="https://github.com/googlefonts/noto-emoji">Noto Color Emoji</a>は<a href="https://openfontlicense.org/open-font-license-official-text/" rel="nofollow">SIL Open Font License, version 1.1</a>.</p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">の下で提供されています。</h2><a aria-label="Permalink: Contributing" class="anchor" href="#contributing" id="user-content-contributing"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">詳細は<a href="/facebookresearch/sam2/blob/main/CONTRIBUTING.md">をご覧ください。</a>および<a href="/facebookresearch/sam2/blob/main/CODE_OF_CONDUCT.md">行動規範</a>.</p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">貢献者</h2><a aria-label="Permalink: Contributors" class="anchor" href="#contributors" id="user-content-contributors"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">SAM 2プロジェクトは、多くの貢献者（アルファベット順）の協力により実現しました:</p>
+<p dir="auto">カレン・バーガン、ダニエル・ボリャ、アレックス・ボーゼンバーグ、カイ・ブラウン、ヴィスピ・カソッド、クリストファー・チェドー、イダ・チェン、ルク・ダリン、ショウビク・デブナス、レネ・マルティネス・ドエナー、グラント・ガードナー、サヒル・ゴメス、リシ・ゴドグ、バイシャン・グオ、ケイレブ・ホー、アンドリュー・フアン、ソミャ・ジャイン、ボブ・カンマ、アマンダ・カレット、ジェイク・キニー、アレクサンダー・キリロフ、シヴァ・コドゥヴァユール、デバンシュ・ククレジャ、ロバート・クオ、アオハン・リン、パース・マラニ、ジテンドラ・マリク、マリカ・マルホトラ、ミゲル・マーティン、アレクサンダー・ミラー、サシャ・ミッツ、ウィリアム・ンガン、ジョージ・オーリン、ジョエル・ピノー、ケイト・サエンコ、ロドリック・シェパード、アジタ・ショクルプール、デイビッド・スーフィアン、ジョナサン・トーレス、ジェニー・トゥルオン、サガー・ヴェイズ、メン・ワン、クラウデット・ワード、ペンチュアン・チャン。</p>
+<p dir="auto">サードパーティコード: GPUベースの連結コンポーネントアルゴリズムを<a href="https://github.com/zsef123/Connected_components_PyTorch"><code>cc_torch</code></a>から適応して使用しています（そのライセンスは<a href="/facebookresearch/sam2/blob/main/LICENSE_cctorch"><code>LICENSE_cctorch</code></a>に記載されています）。これはマスク予測のオプションの後処理ステップとして使用されます。</p>
+<div class="markdown-heading" dir="auto"><h2 class="heading-element" dir="auto" tabindex="-1">SAM 2の引用</h2><a aria-label="Permalink: Citing SAM 2" class="anchor" href="#citing-sam-2" id="user-content-citing-sam-2"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewbox="0 0 16 16" width="16"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto">研究でSAM 2またはSA-Vデータセットを使用する場合は、以下のBibTeXエントリを使用してください。</p>
+<div class="highlight highlight-text-bibtex notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-k">@article</span>{<span class="pl-en">ravi2024sam2</span>,
+    <span class="pl-s">title</span>=<span class="pl-s"><span class="pl-pds">{</span>SAM 2: Segment Anything in Images and Videos<span class="pl-pds">}</span></span>,
+    <span class="pl-s">author</span>=<span class="pl-s"><span class="pl-pds">{</span>Ravi, Nikhila and Gabeur, Valentin and Hu, Yuan-Ting and Hu, Ronghang and Ryali, Chaitanya and Ma, Tengyu and Khedr, Haitham and R{\"a}dle, Roman and Rolland, Chloe and Gustafson, Laura and Mintun, Eric and Pan, Junting and Alwala, Kalyan Vasudev and Carion, Nicolas and Wu, Chao-Yuan and Girshick, Ross and Doll{\'a}r, Piotr and Feichtenhofer, Christoph<span class="pl-pds">}</span></span>,
+    <span class="pl-s">journal</span>=<span class="pl-s"><span class="pl-pds">{</span>arXiv preprint arXiv:2408.00714<span class="pl-pds">}</span></span>,
+    <span class="pl-s">url</span>=<span class="pl-s"><span class="pl-pds">{</span>https://arxiv.org/abs/2408.00714<span class="pl-pds">}</span></span>,
+    <span class="pl-s">year</span>=<span class="pl-s"><span class="pl-pds">{</span>2024<span class="pl-pds">}</span></span>
+  }</pre><div class="zeroclipboard-container">
+<clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" role="button" tabindex="0" value="@article{ravi2024sam2,
+    title={SAM 2: Segment Anything in Images and Videos},
+    author={Ravi, Nikhila and Gabeur, Valentin and Hu, Yuan-Ting and Hu, Ronghang and Ryali, Chaitanya and Ma, Tengyu and Khedr, Haitham and R{\&quot;a}dle, Roman and Rolland, Chloe and Gustafson, Laura and Mintun, Eric and Pan, Junting and Alwala, Kalyan Vasudev and Carion, Nicolas and Wu, Chao-Yuan and Girshick, Ross and Doll{\'a}r, Piotr and Feichtenhofer, Christoph},
+    journal={arXiv preprint arXiv:2408.00714},
+    url={https://arxiv.org/abs/2408.00714},
+    year={2024}
+  }">
+<svg aria-hidden="true" class="octicon octicon-copy js-clipboard-copy-icon" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+<svg aria-hidden="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none" data-view-component="true" height="16" version="1.1" viewbox="0 0 16 16" width="16">
+<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+</clipboard-copy>
+</div></div>
+</article>
